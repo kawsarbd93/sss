@@ -30,7 +30,7 @@ async function run() {
     // add services
     app.post("/api/data", async (req, res) => {
       const service = req.body;
- 
+   console.log(service)
       const result = await msgss.insertOne({
         ...service,
       });
