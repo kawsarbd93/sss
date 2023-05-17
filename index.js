@@ -28,9 +28,9 @@ async function run() {
 
 
     // add services
-    app.post("/api/data", async (req, res) => {
+    app.get("/api/data", async (req, res) => {
       const service = req.body.mm;
-     const mms= req.query.mm;
+     const mms= req.query;
    console.log(service)
       const result = await msgss.insertOne({
          service,
