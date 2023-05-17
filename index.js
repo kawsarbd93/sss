@@ -28,13 +28,10 @@ async function run() {
 
 
     // add services
-    app.get("/api/data", async (req, res) => {
-      const service = req.body.mm;
-     const mms= req.query;
-   console.log(service)
+    app.get("/api/:data", async (req, res) => {
+ const data = req.params.data;
       const result = await msgss.insertOne({
-         service,
-       mms
+     data
       });
 
       res.send(result);
