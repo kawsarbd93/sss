@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 // crud operations
 async function run() {
   try {
-    const client = new MongoClient('mongodb+srv://blogkawsar:DyUHLUUmnkEMlKTI@cluster0.zwupuzd.mongodb.net/?retryWrites=true&w=majority';);
+    const client = new MongoClient('mongodb+srv://blogkawsar:DyUHLUUmnkEMlKTI@cluster0.zwupuzd.mongodb.net/?retryWrites=true&w=majority');
     const database = await client.db("testdb");
 
     //calling collections
