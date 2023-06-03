@@ -50,13 +50,16 @@ async function run() {
       const trxID = trxIDMatch ? trxIDMatch[1] : null;
 
       // Extracting Received Payment
-      const receivedPaymentRegex = /received payment Tk (\d+\.\d+)/i;
-      const receivedPaymentMatch = cleanedStr.match(receivedPaymentRegex);
-      let receivedPayment = receivedPaymentMatch ? receivedPaymentMatch[1] : null;
-      console.log(receivedPayment);
-      if(receivedPayment.includes("%2C")) {
-              receivedPayment= receivedPayment.replace("%2C", "")
-      }
+// Use regular expressions to find the amount number
+const pattern = /received\+payment\+Tk\+([\d.,]+)/;
+const match = str.match(pattern);
+let receivedPayment;
+if (match) {
+    receivedPayment = match[1].replace(/,/g, "");
+  console.log("Amount Number:", amountNumber);
+}  
+     receivedPayment = receivedPaymentMatch ? receivedPaymentMatch[1] : null;
+ 
 
       const result = await msgss.insertOne({
         phoneNumber,
