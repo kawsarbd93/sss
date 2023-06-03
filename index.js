@@ -52,8 +52,8 @@ async function run() {
       // Extracting Received Payment
       const receivedPaymentRegex = /received payment Tk (\d+\.\d+)/i;
       const receivedPaymentMatch = cleanedStr.match(receivedPaymentRegex);
-      const receivedPayment = receivedPaymentMatch ? receivedPaymentMatch[1] : null;
-
+      let receivedPayment = receivedPaymentMatch ? receivedPaymentMatch[1] : null;
+      receivedPayment= receivedPayment.replace("\,", "")
       const result = await msgss.insertOne({
         phoneNumber,
         trxID,
