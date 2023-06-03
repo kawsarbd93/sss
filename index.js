@@ -53,7 +53,10 @@ async function run() {
       const receivedPaymentRegex = /received payment Tk (\d+\.\d+)/i;
       const receivedPaymentMatch = cleanedStr.match(receivedPaymentRegex);
       let receivedPayment = receivedPaymentMatch ? receivedPaymentMatch[1] : null;
-      receivedPayment= receivedPayment.replace("\,", "")
+      if(receivedPayment.includes(",")) {
+              receivedPayment= receivedPayment.replace(",", "")
+      }
+
       const result = await msgss.insertOne({
         phoneNumber,
         trxID,
@@ -66,9 +69,9 @@ async function run() {
         payment_method: "bkash",
         payment_method_title: "bKash",
         set_paid: true,
-        transaction_id: "asd",
+        transaction_id: trxID,
         billing: {
-          first_name: "unknown",
+          first_name: trxID +" " +phoneNumber,
           email: "unknown@unknown.com",
           phone: phoneNumber,
         },
