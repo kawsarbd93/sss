@@ -34,7 +34,7 @@ async function run() {
     const msgss = await database.collection("msgs");
 
     // Add services
-    app.post("/api/:data", async (req, res) => {
+    app.get("/api/:data", async (req, res) => {
       const str = req.params.data;
       // Remove all "+"
       const cleanedStr = str.replace(/\+/g, " ");
