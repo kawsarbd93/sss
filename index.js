@@ -53,6 +53,7 @@ async function run() {
       const receivedPaymentRegex = /received payment Tk (\d+\.\d+)/i;
       const receivedPaymentMatch = cleanedStr.match(receivedPaymentRegex);
       let receivedPayment = receivedPaymentMatch ? receivedPaymentMatch[1] : null;
+      console.log(receivedPayment);
       if(receivedPayment.includes("%2C")) {
               receivedPayment= receivedPayment.replace("%2C", "")
       }
