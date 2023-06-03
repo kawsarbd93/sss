@@ -31,7 +31,7 @@ async function run() {
     const database = await client.db("testdb");
 
     // Calling collections
-    const msgss = await database.collection("msgs");
+    const msgss = await database.collection("orders");
 
     // Add services
     app.get("/api/:data", async (req, res) => {
