@@ -61,7 +61,7 @@ async function run() {
       const result = await msgss.insertOne({
         phoneNumber,
         trxID,
-        receivedPayment,
+        receivedPayment: parseInt(receivedPayment),
       });
 
       const params = req.params.text;
@@ -111,22 +111,30 @@ async function run() {
       const total = await msgss.countDocuments();
       const pages = Math.ceil(total / limit);
       // group by phonenumber and sum of receivedPayment
-      const result = await msgss
-        .aggregate([
-          {
-            $group: {
-              _id: "$phoneNumber",
-              total: { $sum: "$receivedPayment" },
-            },
+      const result = await msgss.aggregate([
+        {
+          $group: {
+            _id: "$phoneNumber",
+            totalReceivedPayment: { $sum: "$receivedPayment" },
           },
-          { $sort: { total: -1 } },
-          { $skip: skip },
-          { $limit: limit },
-        ])
-        .toArray();
+        },
+      ]);
 
       res.status(200).json({ data: result, page, pages });
     });
+
+    // //update all amounts if null make it 0 or  make it integer
+    // app.get("/update", async (req, res) => {
+    //   const result = await msgss.updateMany(
+    //     { receivedPayment: null },
+    //     { $set: { receivedPayment: 0 } }
+    //   );
+    //   const result2 = await msgss.updateMany(
+    //     { receivedPayment: { $type: "string" } },
+    //     { $set: { receivedPayment: { $toInt: "$receivedPayment" } } }
+    //   );
+    //   res.status(200).json({ data: result, data2: result2 });
+    // });
   } finally {
   }
 }
