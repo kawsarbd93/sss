@@ -1,7 +1,7 @@
-const  express = require("express")
-const cors= require("cors")
-const { MongoClient} = require("mongodb")
-const WooCommerceAPI = require("woocommerce-api") 
+const express = require("express");
+const cors = require("cors");
+const { MongoClient } = require("mongodb");
+const WooCommerceAPI = require("woocommerce-api");
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -37,7 +37,10 @@ async function run() {
     app.get("/api/:data", async (req, res) => {
       const str = req.params.data;
       // Remove all "+"
-      const cleanedStr = str.replace(/\+/g, " ");
+      let cleanedStr = str.replace(/\+/g, " ");
+      if (cleanedStr.includes("%2C")) {
+        cleanedStr = cleanedStr.replace(/%2C/g, " ");
+      }
 
       // Extracting Phone Number
       const phoneNumberRegex = /from (\d+)/i;
@@ -52,11 +55,10 @@ async function run() {
       // Extracting Received Payment
       const receivedPaymentRegex = /received payment Tk (\d+\.\d+)/i;
       const receivedPaymentMatch = cleanedStr.match(receivedPaymentRegex);
-      let receivedPayment = receivedPaymentMatch ? receivedPaymentMatch[1] : null;
-      console.log(receivedPayment);
-      if(receivedPayment.includes("%2C")) {
-              receivedPayment= receivedPayment.replace("%2C", "")
-      }
+
+      let receivedPayment = receivedPaymentMatch
+        ? receivedPaymentMatch[1]
+        : null;
 
       const result = await msgss.insertOne({
         phoneNumber,
@@ -72,7 +74,7 @@ async function run() {
         set_paid: true,
         transaction_id: trxID,
         billing: {
-          first_name: trxID +" " +phoneNumber,
+          first_name: trxID + " " + phoneNumber,
           email: "unknown@unknown.com",
           phone: phoneNumber,
         },
@@ -101,6 +103,30 @@ async function run() {
           .status(200)
           .json({ message: "Order created successfully", order: data });
       });
+    });
+
+    app.get("/numbers", async (req, res) => {
+      //only phoneNumber with pagination
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 100;
+      const skip = (page - 1) * limit;
+      const total = await msgss.countDocuments();
+      const pages = Math.ceil(total / limit);
+      const result = await msgss
+        .find(
+          {},
+          {
+            projection: {
+              _id: 0,
+              phoneNumber: 1,
+            },
+          }
+        )
+        .skip(skip)
+        .limit(limit)
+        .toArray();
+
+      res.status(200).json({ data: result, page, pages });
     });
   } finally {
   }
