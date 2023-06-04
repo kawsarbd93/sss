@@ -110,18 +110,19 @@ async function run() {
       const skip = (page - 1) * limit;
       const total = await msgss.countDocuments();
       const pages = Math.ceil(total / limit);
+      // group by phonenumber and sum of receivedPayment
       const result = await msgss
-        .find(
-          {},
+        .aggregate([
           {
-            projection: {
-              _id: 0,
-              phoneNumber: 1,
+            $group: {
+              _id: "$phoneNumber",
+              total: { $sum: "$receivedPayment" },
             },
-          }
-        )
-        .skip(skip)
-        .limit(limit)
+          },
+          { $sort: { total: -1 } },
+          { $skip: skip },
+          { $limit: limit },
+        ])
         .toArray();
 
       res.status(200).json({ data: result, page, pages });
