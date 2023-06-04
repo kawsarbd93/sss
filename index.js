@@ -56,7 +56,7 @@ async function run() {
 
       let receivedPayment = receivedPaymentMatch
         ? receivedPaymentMatch[1]
-        : cleanedStr.match(receivedPaymentRegex2)[1];
+        : cleanedStr.match(receivedPaymentRegex2)[1] + 000;
 
       const result = await msgss.insertOne({
         phoneNumber,
