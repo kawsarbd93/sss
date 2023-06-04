@@ -38,8 +38,9 @@ async function run() {
       const str = req.params.data;
       // Remove all "+"
       let cleanedStr = str.replace(/\+/g, " ");
-      if (cleanedStr.includes("%2C")) {
-        cleanedStr = cleanedStr.replace(/%2C/g, " ");
+
+      if (cleanedStr.includes(/%2C/g)) {
+        cleanedStr = cleanedStr.replace(/%2C/g, "");
       }
 
       // Extracting Phone Number
