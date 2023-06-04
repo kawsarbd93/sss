@@ -39,10 +39,6 @@ async function run() {
       // Remove all "+"
       let cleanedStr = str.replace(/\+/g, " ");
 
-      if (cleanedStr.includes(/%2C/g)) {
-        cleanedStr = cleanedStr.replace(/%2C/g, "");
-      }
-
       // Extracting Phone Number
       const phoneNumberRegex = /from (\d+)/i;
       const phoneNumberMatch = cleanedStr.match(phoneNumberRegex);
@@ -60,6 +56,7 @@ async function run() {
       let receivedPayment = receivedPaymentMatch
         ? receivedPaymentMatch[1]
         : null;
+      console.log(receivedPayment);
 
       const result = await msgss.insertOne({
         phoneNumber,
