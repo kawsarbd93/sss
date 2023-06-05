@@ -107,12 +107,25 @@ async function run() {
     });
 
     app.get("/numbers", async (req, res) => {
+      //?pagination[current]=1&pagination[pageSize]=10&column[title]=Sent Amount&column[dataIndex]=Sent&column[sorter]=true&column[width]=20%&order=ascend&field=Sent
       const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 100;
-      const skip = (page - 1) * limit;
+      const pageSize = parseInt(req.query.pageSize) || 10;
+      const skip = (page - 1) * pageSize;
+      const limit = pageSize;
 
       const total = await msgss.countDocuments();
-      const pages = Math.ceil(total / limit);
+
+      const pages = Math.ceil(total / pageSize);
+      //sort
+      const sort = req.query.order || "ascend";
+      const field = req.query.field || "Sent";
+      const sortObj = {};
+      sortObj[field] = sort === "ascend" ? 1 : -1;
+
+      //filter
+      const filter = req.query.filter || "";
+      const filterObj = {};
+      filterObj[field] = { $regex: filter, $options: "i" };
 
       const orders = await msgss
         .aggregate([
@@ -124,7 +137,7 @@ async function run() {
               transactionsTimes: { $sum: 1 },
             },
           },
-          { $sort: { Sent: -1 } },
+          { $sort: sortObj },
           { $skip: skip },
           { $limit: limit },
           {
@@ -134,6 +147,7 @@ async function run() {
               Received: 1,
               Sent: 1,
               transactionsTimes: 1,
+              TotalSentAndReceived: { $sum: ["$Received", "$Sent"] },
             },
           },
         ])
@@ -141,7 +155,7 @@ async function run() {
 
       res
         .status(200)
-        .json({ data: orders, page, pages, totalTransactions: total });
+        .json({ data: orders, page, pageSize, pages, total, skip, limit });
     });
 
     // add multiple numbers without woocommerce
