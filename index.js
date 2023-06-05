@@ -119,18 +119,20 @@ async function run() {
           {
             $group: {
               _id: "$phoneNumber",
-              Total: { $sum: "$receivedPayment" },
+              Received: { $sum: "$receivedPayment" },
+              Sent: { $sum: "$sentPayment" },
               transactionsTimes: { $sum: 1 },
             },
           },
-          { $sort: { Total: -1 } },
+          { $sort: { Sent: -1 } },
           { $skip: skip },
           { $limit: limit },
           {
             $project: {
               _id: 0,
               phoneNumber: "$_id",
-              Total: 1,
+              Received: 1,
+              Sent: 1,
               transactionsTimes: 1,
             },
           },
