@@ -137,9 +137,6 @@ async function run() {
               transactionsTimes: { $sum: 1 },
             },
           },
-
-          { $skip: skip },
-          { $limit: limit },
           {
             $project: {
               _id: 0,
@@ -151,6 +148,8 @@ async function run() {
             },
           },
           { $sort: sortObj },
+          { $skip: skip },
+          { $limit: limit },
         ])
         .toArray();
 
