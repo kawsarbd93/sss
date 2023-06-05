@@ -120,7 +120,11 @@ async function run() {
       const sort = req.query.order || "ascend";
       const field = req.query.field || "Sent";
       const sortObj = {};
+
       sortObj[field] = sort === "ascend" ? 1 : -1;
+
+      // default sort
+      sortObj["TotalSentAndReceived"] = -1;
 
       //filter
       const filter = req.query.filter || "";
