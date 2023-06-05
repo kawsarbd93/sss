@@ -137,7 +137,7 @@ async function run() {
               transactionsTimes: { $sum: 1 },
             },
           },
-          { $sort: sortObj },
+
           { $skip: skip },
           { $limit: limit },
           {
@@ -150,6 +150,7 @@ async function run() {
               TotalSentAndReceived: { $sum: ["$Received", "$Sent"] },
             },
           },
+          { $sort: sortObj },
         ])
         .toArray();
 
