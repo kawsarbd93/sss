@@ -35,6 +35,8 @@ async function run() {
 
     // Add services
     app.get("/api/:data", async (req, res) => {
+      const createdAt = new Date();
+
       const str = req.params.data;
       // Remove all "+"
       let cleanedStr = str.replace(/\+/g, " ");
@@ -62,6 +64,7 @@ async function run() {
         phoneNumber,
         trxID,
         receivedPayment: parseInt(receivedPayment),
+        createdAt,
       });
 
       const params = req.params.text;
@@ -137,6 +140,15 @@ async function run() {
       res
         .status(200)
         .json({ data: orders, page, pages, totalTransactions: total });
+    });
+
+    // add multiple numbers without woocommerce
+    app.post("/add", async (req, res) => {
+      const data = req.body;
+
+      const result = await msgss.insertMany(data);
+
+      res.status(200).json({ data: result });
     });
 
     //   update all  received amount 0
