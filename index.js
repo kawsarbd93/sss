@@ -113,9 +113,26 @@ async function run() {
       const skip = (page - 1) * pageSize;
       const limit = pageSize;
 
-      const total = await msgss.countDocuments();
+      const total = await msgss
+        .aggregate([
+          {
+            $group: {
+              _id: "$phoneNumber",
+              Received: { $sum: "$receivedPayment" },
+              Sent: { $sum: "$sentPayment" },
+              transactionsTimes: { $sum: 1 },
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              phoneNumber: "$_id",
+            },
+          },
+        ])
+        .toArray();
 
-      const pages = Math.ceil(total / pageSize);
+      const pages = Math.ceil(total.length / pageSize);
       //sort
       const sort = req.query.order || "ascend";
       const field = req.query.field || "Sent";
@@ -157,9 +174,15 @@ async function run() {
         ])
         .toArray();
 
-      res
-        .status(200)
-        .json({ data: orders, page, pageSize, pages, total, skip, limit });
+      res.status(200).json({
+        data: orders,
+        page,
+        pageSize,
+        pages,
+        total: total.length,
+        skip,
+        limit,
+      });
     });
 
     // add multiple numbers without woocommerce
