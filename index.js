@@ -162,6 +162,7 @@ async function run() {
             $project: {
               _id: 0,
               phoneNumber: "$_id",
+              createdAt: 1,
               Received: 1,
               Sent: 1,
               transactionsTimes: 1,
