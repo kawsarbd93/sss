@@ -141,7 +141,7 @@ async function run() {
       sortObj[field] = sort === "ascend" ? 1 : -1;
 
       // default sort
-      sortObj["TotalSentAndReceived"] = -1;
+      sortObj["createdAt"] = -1;
 
       //filter
       const filter = req.query.filter || "";
@@ -188,6 +188,10 @@ async function run() {
     // add multiple numbers without woocommerce
     app.post("/add", async (req, res) => {
       const data = req.body;
+      // add date to each object
+      data.forEach((item) => {
+        item.createdAt = new Date();
+      });
 
       const result = await msgss.insertMany(data);
 
