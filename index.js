@@ -156,6 +156,7 @@ async function run() {
               Received: { $sum: "$receivedPayment" },
               Sent: { $sum: "$sentPayment" },
               transactionsTimes: { $sum: 1 },
+              createdAt: { $last: "$createdAt" },
             },
           },
           {
