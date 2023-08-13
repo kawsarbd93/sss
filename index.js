@@ -106,6 +106,48 @@ async function run() {
       });
     });
 
+    // get all invalid numbers  characters length less than 11
+    app.get("/delete", async (req, res) => {
+      const result = await msgss.deleteMany({
+        $and: [
+          { phoneNumber: { $exists: true } }, // Check if phoneNumber field exists
+          { $expr: { $gt: [{ $strLenCP: "$phoneNumber" }, 11] } },
+        ],
+      });
+
+      res.status(200).json({ data: result });
+    });
+
+    // get single number transactions
+
+    app.get("/number/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = await msgss.find({ phoneNumber: id }).toArray();
+      const sum = await msgss.aggregate([
+        {
+          $match: {
+            phoneNumber: id,
+          },
+        },
+        {
+          $group: {
+            _id: "$phoneNumber",
+            Received: { $sum: "$receivedPayment" },
+            Sent: { $sum: "$sentPayment" },
+            transactionsTimes: { $sum: 1 },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            phoneNumber: "$_id",
+          },
+        },
+      ]);
+
+      res.status(200).json({ list: result, sum: sum });
+    });
+
     app.get("/numbers", async (req, res) => {
       //?pagination[current]=1&pagination[pageSize]=10&column[title]=Sent Amount&column[dataIndex]=Sent&column[sorter]=true&column[width]=20%&order=ascend&field=Sent
       const page = parseInt(req.query.page) || 1;
