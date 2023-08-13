@@ -122,7 +122,10 @@ async function run() {
 
     app.get("/number/:id", async (req, res) => {
       const id = req.params.id;
-      const result = await msgss.find({ phoneNumber: id }).toArray();
+      const result = await msgss
+        .find({ phoneNumber: id })
+        .sort({ createdAt: -1 })
+        .toArray();
       const sum = await msgss.aggregate([
         {
           $match: {
