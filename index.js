@@ -111,7 +111,15 @@ async function run() {
       const result = await msgss.deleteMany({
         $and: [
           { phoneNumber: { $exists: true } }, // Check if phoneNumber field exists
-          { $expr: { $gt: [{ $strLenCP: "$phoneNumber" }, 11] } },
+          // { $expr: { $lt: [{ $strLenCP: "$phoneNumber" }, 11] }  check if phoneNumber length is less than 11 or greater than 11
+          {
+            $expr: {
+              $or: [
+                { $lt: [{ $strLenCP: "$phoneNumber" }, 11] },
+                { $gt: [{ $strLenCP: "$phoneNumber" }, 11] },
+              ],
+            },
+          },
         ],
       });
 
@@ -186,7 +194,7 @@ async function run() {
       sortObj[field] = sort === "ascend" ? 1 : -1;
 
       // default sort
-      sortObj["createdAt"] = -1;
+      sortObj["createdAt"] = 1;
 
       //filter
       const filter = req.query.filter || "";
@@ -235,14 +243,20 @@ async function run() {
     // add multiple numbers without woocommerce
     app.post("/add", async (req, res) => {
       const data = req.body;
+
+      const newData = [];
       // add date to each object
-      data.forEach((item) => {
-        item.createdAt = new Date();
+      data.forEach((element) => {
+        // check phone number and add date
+        if (element.phoneNumber && element.phoneNumber.length === 11) {
+          element.createdAt = new Date();
+          newData.push(element);
+        }
       });
 
-      const result = await msgss.insertMany(data);
+      const result = await msgss.insertMany(newData);
 
-      res.status(200).json({ data: result });
+      res.status(200).json({ data: result, list: data });
     });
 
     //   update all  received amount 0
