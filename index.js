@@ -241,18 +241,40 @@ async function run() {
     });
 
     // add multiple numbers without woocommerce
-    app.post("/add", async (req, res) => {
-      const data = req.body;
+  app.post("/add", async (req, res) => {
+  try {
+    const data = req.body;
 
-      const newData = [];
-      // add date to each object
-      data.forEach((element) => {
-        // check phone number and add date
-        if (element.phoneNumber && element.phoneNumber.length === 11) {
-          element.createdAt = new Date();
-          newData.push(element);
-        }
-      });
+    const newData = []; 
+    data.forEach((element) => {
+      if (element.phoneNumber && element.phoneNumber.length === 11) {
+        element.createdAt = new Date();
+        newData.push(element);
+      }
+    });
+
+    const promises = newData.map(async (item) => {
+      const phoneNumber = item.phoneNumber;
+      const sentPayment = item.sentPayment;
+      const trxID = item.trxID;
+      
+      const response = await axios.get(
+        `https://sms.kawsarcomputer.com/services/send.php?key=3ebd13d371d522f794ebf908e59e668b98f943a8&number=${phoneNumber}&message=${sentPayment}TK+Withdraw+${trxID}+Sofol+Vave+Sompono+Hyeche.+%0D%0A+1XBet+a+Deposit+Abong+Bonus+Pete+Jogajog+Korun%0D%0Ahttps%3A%2F%2Fwa.me%2F%2B8801987352371%0D%0A&devices=6&type=sms&prioritize=0`
+      );
+      console.log(response.data);
+    });
+
+    await Promise.all(promises);
+
+    const result = await msgss.insertMany(newData); // Assuming msgss is defined
+
+    res.status(200).json({ data: result });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred." });
+  }
+});
+ 
 
       const result = await msgss.insertMany(newData);
 
