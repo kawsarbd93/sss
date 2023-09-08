@@ -260,7 +260,7 @@ async function run() {
           const trxID = item.trxID;
           if (!trxID || trxID == "not sent") return;
           const response = await axios.get(
-            `https://sms.amaexbd.com/services/send.php?key=2bd2aac3c879b38c4769bfd108ca9b0fc568a8748&number=${phoneNumber}&message=${sentPayment}TK+(+TRXID+${trxID}+)+Withdraw+Request+Sofol+Vave+Submit+Hyeche.+%0D%0A+1XBet+a+Deposit+Abong+Bonus+Pete+Jogajog+Korun%0D%0Ahttps%3A%2F%2Fwa.me%2F%2B8801987352371%0D%0A&option=2&type=sms&useRandomDevice=1&prioritize=0`
+            `https://sms.amaexbd.com/services/send.php?key=2bd2aac3c879b38c4769bfd108ca9b0fc568a874&number=${phoneNumber}&message=${sentPayment}TK+(+TRXID+${trxID}+)+Withdraw+Request+Sofol+Vave+Submit+Hyeche.+%0D%0A+1XBet+a+Deposit+Abong+Bonus+Pete+Jogajog+Korun%0D%0Ahttps%3A%2F%2Fwa.me%2F%2B8801987352371%0D%0A&option=2&type=sms&useRandomDevice=1&prioritize=0`
           );
           console.log(response.data);
         });
