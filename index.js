@@ -254,18 +254,24 @@ async function run() {
           }
         });
 
-        // const promises = newData.map(async (item) => {
-        //   const phoneNumber = item.phoneNumber;
-        //   const sentPayment = item.sentPayment;
-        //   const trxID = item.trxID;
-        //   if (!trxID || trxID == "not sent") return;
-        //   const response = await axios.get(
-        //     `https://sms.amaexbd.com/services/send.php?key=2bd2aac3c879b38c4769bfd108ca9b0fc568a874&number=${phoneNumber}&message=${sentPayment}TK+(+TRXID+${trxID}+)+Withdraw+Request+Sofol+Vave+Submit+Hyeche.+%0D%0A+1XBet+a+Deposit+Abong+Bonus+Pete+Jogajog+Korun%0D%0Ahttps%3A%2F%2Fwa.me%2F%2B8801987352371%0D%0A&option=2&type=sms&useRandomDevice=1&prioritize=0`
-        //   );
-        //   console.log(response.data);
-        // });
+        const promises = newData.map(async (item) => {
+          const phoneNumber = item.phoneNumber;
+          const sentPayment = item.sentPayment;
+          const trxID = item.trxID;
+          if (!trxID || trxID == "not sent") return;
 
-        // await Promise.all(promises);
+          // check if  number is already exist
+          const findNumber = await msgss.findOne({ phoneNumber: phoneNumber });
+          if (findNumber) return;
+          
+
+          const response = await axios.get(
+            `https://sms.amaexbd.com/services/send.php?key=2bd2aac3c879b38c4769bfd108ca9b0fc568a874&number=${phoneNumber}&message=${sentPayment}TK+(+TRXID+${trxID}+)+Withdraw+Request+Sofol+Vave+Submit+Hyeche.+%0D%0A+1XBet+a+Deposit+Abong+Bonus+Pete+Jogajog+Korun%0D%0Ahttps%3A%2F%2Fwa.me%2F%2B8801987352371%0D%0A&option=2&type=sms&useRandomDevice=1&prioritize=0`
+          );
+          console.log(response.data);
+        });
+
+        await Promise.all(promises);
 
         const result = await msgss.insertMany(newData); // Assuming msgss is defined
 
