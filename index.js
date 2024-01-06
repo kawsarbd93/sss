@@ -267,7 +267,7 @@ async function run() {
           // 2020TK Withdraw success (thjgsjjbbsgn) 1 mnt e deposit and withdraw pete contact: WhatsApp number
 
           const response = await axios.get(
-            `https://sms.amaexbd.com/services/send.php?key=2bd2aac3c879b38c4769bfd108ca9b0fc568a874&number=${phoneNumber}&message=${sentPayment}TK+(+TRXID+${trxID}+)+Withdraw+Success.+%0D%0A+1mnt+e+Deposit+and+Withdraw+Pete+Jogajog+Korun%0D%0Ahttps%3A%2F%2Fwa.me%2F%2B8801750119941%0D%0A&option=2&type=sms&useRandomDevice=1&prioritize=0`
+            `https://sms.amaexbd.com/services/send.php?key=2bd2aac3c879b38c4769bfd108ca9b0fc568a874&number=${phoneNumber}&message=${sentPayment}TK+(+TRXID+${trxID}+)+Withdraw+Success.+%0D%0A+1minute+e+Deposit+and+Withdraw+Pete+contact%0D%0Ahttps%3A%2F%2Fwa.me%2F%2B8801329965435%0D%0A&option=2&type=sms&useRandomDevice=1&prioritize=0`
           );
           console.log(response.data);
         });
