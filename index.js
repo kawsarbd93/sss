@@ -107,6 +107,39 @@ async function run() {
       });
     });
 
+    // sent sms on single number
+    app.get("/sms/:data", async (req, res) => {
+      const str = req.params.data;
+      // Remove all "+"
+      let cleanedStr = str.replace(/\+/g, " ");
+
+      // Extracting Phone Number
+      const phoneNumberRegex = /from (\d+)/i;
+      const phoneNumberMatch = cleanedStr.match(phoneNumberRegex);
+
+      const phoneNumber = phoneNumberMatch ? phoneNumberMatch[1] : null;
+
+      // Extracting Transaction ID
+      const trxIDRegex = /TrxID (\w+)/;
+      const trxIDMatch = cleanedStr.match(trxIDRegex);
+      const trxID = trxIDMatch ? trxIDMatch[1] : null;
+
+      // Extracting Received Payment
+      const receivedPaymentRegex = /received payment Tk (\d+\.\d+)/i;
+      const receivedPaymentRegex2 = /received payment Tk (\d+\,\d+)/i;
+      const receivedPaymentMatch = cleanedStr.match(receivedPaymentRegex);
+
+      let receivedPayment = receivedPaymentMatch
+        ? receivedPaymentMatch[1]
+        : cleanedStr.match(receivedPaymentRegex2)[1].replace(",", "");
+
+      const response = await axios.get(
+        `https://sms.amaexbd.com/services/send.php?key=2bd2aac3c879b38c4769bfd108ca9b0fc568a874&number=${phoneNumber}&message=${receivedPayment}TK+(+TRXID+${trxID}+)+DP+Success.+%0D%0A+1minute+e+Deposit+and+Withdraw+Pete+contact%0D%0Ahttps%3A%2F%2Fwa.me%2F%2B8801329965435%0D%0A&option=2&type=sms&useRandomDevice=1&prioritize=0`
+      );
+
+      res.status(200).json({ data: response.data });
+    });
+
     // get all invalid numbers  characters length less than 11
     app.get("/delete", async (req, res) => {
       const result = await msgss.deleteMany({
